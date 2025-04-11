@@ -1,12 +1,18 @@
-import {ReactNode} from 'react';
+import React, {ReactNode} from 'react';
 
-export interface ButtonProps {
-    children: ReactNode;
+export type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    children?: React.ReactNode;
     onClick?: () => void;
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
     className?: string;
-    // Style props
+    isLoading?: boolean;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    // Custom style props
     color?: string;
     bgColor?: string;
     width?: string | number;
@@ -15,11 +21,8 @@ export interface ButtonProps {
     border?: string;
     fontSize?: string | number;
     fontWeight?: string | number;
-    padding?: string | number
-    cursor?: string;
-    // Hover effects
     hoverColor?: string;
     hoverBgColor?: string;
-    // Variants
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+    padding?: string | number;
+    cursor?: string;
 }

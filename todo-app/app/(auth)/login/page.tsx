@@ -49,15 +49,7 @@ const Login = (): JSX.Element => {
                         </a>
                     </div>
 
-                    <Button
-                        className="w-full p-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500  "
-                        type="submit"
-                        bgColor="#155dfc"
-                        hoverBgColor="blue-700"
-                        width="100%"
-                        height="36px"
-
-                    >
+                    <Button variant="default" size="default">
                         Sign in
                     </Button>
 
@@ -67,6 +59,7 @@ const Login = (): JSX.Element => {
                             Register now
                         </a>
                     </div>
+
                 </form>
             </div>
         </div>
