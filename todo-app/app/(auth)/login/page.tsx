@@ -1,6 +1,7 @@
 import Button from "@/app/components/ui/button/button";
+import {JSX} from "react";
 
-const Login = () => {
+const Login = (): JSX.Element => {
     return (
         <div className="container flex items-center justify-center min-h-screen p-10">
             <div className="border border-blue-500 p-10 rounded-md shadow-md w-full max-w-md">
