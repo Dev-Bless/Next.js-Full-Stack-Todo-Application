@@ -1,9 +1,13 @@
 'use client';
 
-import {ButtonProps} from "@/app/components/ui/button/type";
 import React from "react";
+import {ButtonProps} from "@/app/types/buttonProp.interface";
 
-const Button: React.FC<ButtonProps> = ({children, onClick, type = 'button', disabled = false,
+const Button: React.FC<ButtonProps> = ({
+                                           children,
+                                           onClick,
+                                           type = 'button',
+                                           disabled = false,
                                            className = '',
                                            color = 'white',
                                            bgColor = 'blue-500',
@@ -16,6 +20,7 @@ const Button: React.FC<ButtonProps> = ({children, onClick, type = 'button', disa
                                            hoverColor = color,
                                            hoverBgColor = bgColor,
                                            padding = '1px',
+                                           cursor = 'pointer',
                                            ...props
                                        }) => {
 
