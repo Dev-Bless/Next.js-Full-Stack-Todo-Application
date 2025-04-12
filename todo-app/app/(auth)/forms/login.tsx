@@ -1,28 +1,24 @@
 'use client';
 
-import React, {useState} from 'react';
+import React from 'react';
 import {useRouter} from 'next/navigation';
-import {useDispatch, useSelector} from 'react-redux';
-import {loginUser} from '@/app/redux/slices/authSlice';
+import {useSelector} from 'react-redux';
+import {loginUser, setLoginForm} from '@/app/redux/slices/authSlice';
 import {AppDispatch, RootState} from '@/app/redux/store';
 import Button from "@/app/components/ui/button/button";
-import {validateForm} from '@/app/libs/login-form';
 import Link from "next/link";
 import toast from "react-hot-toast";
+import {useAppDispatch} from "@/app/redux/hooks/hooks";
 
 const LoginForm = () => {
     const router = useRouter();
-    const dispatch: AppDispatch = useDispatch();
-    const {loading} = useSelector((state: RootState) => state.auth);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isFormValid, setIsFormValid] = useState(false);
+    const dispatch: AppDispatch = useAppDispatch();
+    const {loading, loginForm, isFormValid} = useSelector((state: RootState) => state.auth);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(loginUser({email, password}))
         try {
-            await dispatch(loginUser({email, password})).unwrap();
+            await dispatch(loginUser(loginForm));
             toast.success("Login successful!");
             router.push("/dashboard");
         } catch (error: any) {
@@ -30,16 +26,9 @@ const LoginForm = () => {
         }
     };
 
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newEmail = e.target.value;
-        setEmail(newEmail);
-        setIsFormValid(validateForm(newEmail, password));
-    };
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newPassword = e.target.value;
-        setPassword(newPassword);
-        setIsFormValid(validateForm(email, newPassword));
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {id, value} = e.target;
+        dispatch(setLoginForm({field: id, value}));
     };
 
 
@@ -57,8 +46,8 @@ const LoginForm = () => {
                             type="email"
                             className="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             placeholder="Enter your email"
-                            value={email}
-                            onChange={handleEmailChange}
+                            value={loginForm.email}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -72,8 +61,8 @@ const LoginForm = () => {
                             type="password"
                             className="border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             placeholder="Enter your password"
-                            value={password}
-                            onChange={handlePasswordChange}
+                            value={loginForm.password}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -106,7 +95,7 @@ const LoginForm = () => {
 
                     <div className="text-center text-sm">
                         Don't have an account?{" "}
-                        <Link href="/sign-up" className="text-blue-600 hover:underline">
+                        <Link href="/register" className="text-blue-600 hover:underline">
                             Register now
                         </Link>
                     </div>
