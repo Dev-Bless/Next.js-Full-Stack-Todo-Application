@@ -1,17 +1,23 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {RootState} from "@reduxjs/toolkit/query";
-
-interface AuthState {
-    user: null | { email: string };
-    token: string | null;
-    loading: boolean;
-    error: string | null;
-}
+import {AuthState} from "@/app/types/auth";
+import {validateLoginForm, validateRegisterForm} from '@/app/libs/login-form';
 
 const initialState: AuthState = {
     user: null,
     token: null,
+    registerForm: {
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    },
+    loginForm: {
+        email: '',
+        password: ''
+    },
+    isFormValid: false,
     loading: false,
     error: null,
 };
@@ -20,13 +26,25 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (credentials: { email: string; password: string }, {rejectWithValue}) => {
         try {
-            const response = await axios.post("/api/auth/login", credentials);
-            return response.data;
+            const {data} = await axios.post("/api/auth/login", credentials);
+            return data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.data?.message || "Login failed");
+            return rejectWithValue(error.response?.message || "Login failed");
         }
     }
 );
+
+export const registerUser = createAsyncThunk(
+    "auth/register",
+    async (credentials: any, {rejectWithValue}) => {
+        try {
+            const {data} = await axios.post("api/auth/register", credentials)
+            return data;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.message || "Register failed");
+        }
+    }
+)
 
 const authSlice = createSlice({
     name: "auth",
@@ -36,6 +54,42 @@ const authSlice = createSlice({
             state.user = null;
             state.token = null;
         },
+        setRegisterForm: (state, action: PayloadAction<{ field: string; value: string }>) => {
+            const {field, value} = action.payload;
+            state.registerForm = {
+                ...state.registerForm,
+                [field]: value,
+            };
+            const {username, email, password, confirmPassword} = state.registerForm;
+
+            const validated = validateRegisterForm(username, email, password, confirmPassword);
+
+            state.isFormValid =
+                username.length > 0 &&
+                validated &&
+                password === confirmPassword;
+        },
+        resetForm: (state) => {
+            state.registerForm = initialState.registerForm;
+            state.isFormValid = initialState.isFormValid;
+            state.error = initialState.error;
+        },
+        setLoginForm: (state, action: PayloadAction<{ field: string; value: string }>) => {
+            const {field, value} = action.payload;
+            state.loginForm = {
+                ...state.loginForm,
+                [field]: value,
+            }
+
+            const {email, password} = state.loginForm;
+
+            state.isFormValid = validateLoginForm(email, password);
+        },
+        resetLoginForm: (state) => {
+            state.loginForm = initialState.loginForm;
+            state.isFormValid = initialState.isFormValid;
+            state.error = initialState.error;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -55,6 +109,6 @@ const authSlice = createSlice({
     },
 });
 
-export const {logout} = authSlice.actions;
+export const {logout, setRegisterForm, resetForm, setLoginForm, resetLoginForm} = authSlice.actions;
 export const selectAuth = (state: RootState<any, any, any>) => state.auth;
 export default authSlice.reducer;
