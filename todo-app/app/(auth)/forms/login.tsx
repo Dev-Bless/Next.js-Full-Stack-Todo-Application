@@ -2,19 +2,34 @@
 
 import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import Link from 'next/link';
+import {useDispatch, useSelector} from 'react-redux';
+import {loginUser} from '@/app/redux/slices/authSlice';
+import {AppDispatch, RootState} from '@/app/redux/store';
 import Button from "@/app/components/ui/button/button";
-import {validateForm} from "@/app/libs/login-form";
+import {validateForm} from '@/app/libs/login-form';
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 const LoginForm = () => {
     const router = useRouter();
+    const dispatch: AppDispatch = useDispatch();
+    const {loading} = useSelector((state: RootState) => state.auth);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
     const [isFormValid, setIsFormValid] = useState(false);
 
-    // Handle input changes
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        dispatch(loginUser({email, password}))
+        try {
+            await dispatch(loginUser({email, password})).unwrap();
+            toast.success("Login successful!");
+            router.push("/dashboard");
+        } catch (error: any) {
+            toast.error(error.message || "Login failed");
+        }
+    };
+
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newEmail = e.target.value;
         setEmail(newEmail);
@@ -27,31 +42,11 @@ const LoginForm = () => {
         setIsFormValid(validateForm(email, newPassword));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        setError('');
-
-        setIsLoading(true);
-
-        setTimeout(() => {
-            setIsLoading(false);
-
-            router.push('/sign-up');
-        }, 2000);
-    };
 
     return (
         <div className="container flex items-center justify-center min-h-screen p-10">
             <div className=" shadow-md w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
-
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {error}
-                    </div>
-                )}
-
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="flex flex-col">
                         <label htmlFor="email" className="mb-1 text-sm font-medium">
@@ -102,8 +97,8 @@ const LoginForm = () => {
                     <Button
                         variant="default"
                         size="default"
-                        isLoading={isLoading}
-                        disabled={!isFormValid || isLoading}
+                        isLoading={loading}
+                        disabled={!isFormValid || loading}
                         type="submit"
                     >
                         Sign in
