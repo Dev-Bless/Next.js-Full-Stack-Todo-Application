@@ -4,7 +4,6 @@ const api = axios.create({
     baseURL: '/api',
 });
 
-// Add interceptors for global error handling
 api.interceptors.response.use(
     (response) => response.data,
     (error) => {
