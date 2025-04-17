@@ -22,14 +22,26 @@ const initialState: AuthState = {
     error: null,
 };
 
+
 export const loginUser = createAsyncThunk(
-    "auth/login",
-    async (credentials: { email: string; password: string }, {rejectWithValue}) => {
+    'auth/login',
+    async (credentials: { email: string; password: string; }, {rejectWithValue}) => {
         try {
-            const {data} = await axios.post("/api/auth/login", credentials);
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(credentials)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.message || 'Login failed');
+
+            localStorage.setItem('token', data.token);
+
             return data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.message || "Login failed");
+            return rejectWithValue(error.message);
         }
     }
 );
