@@ -7,13 +7,10 @@ export class Todo {
     id!: string
 
     @Column()
-    title!: string;
+    task!: string;
 
     @Column({default: false})
     isComplete!: boolean;
-
-    @Column({nullable: true})
-    description!: string;
 
     @CreateDateColumn()
     createdAt!: Date;
