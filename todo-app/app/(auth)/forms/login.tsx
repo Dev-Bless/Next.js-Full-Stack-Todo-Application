@@ -35,7 +35,7 @@ const LoginForm = () => {
     return (
         <div className="container flex items-center justify-center min-h-screen p-10">
             <div className=" shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+                <h1 className="text-2xl font-bold mb-6 text-center">Login here!</h1>
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="flex flex-col">
                         <label htmlFor="email" className="mb-1 text-sm font-medium">
