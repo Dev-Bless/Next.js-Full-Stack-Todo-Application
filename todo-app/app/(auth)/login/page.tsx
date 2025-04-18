@@ -1,3 +1,4 @@
+"use client";
 import {StaticImageData} from "next/image";
 import AuthenticationFrame, {ImagePosition} from "@/app/(auth)/Frame/frame";
 import LoginForm from "@/app/(auth)/forms/login";
