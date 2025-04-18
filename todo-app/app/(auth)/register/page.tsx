@@ -1,3 +1,4 @@
+'use client'
 import {StaticImageData} from "next/image";
 import AuthenticationFrame, {ImagePosition} from "@/app/(auth)/Frame/frame";
 import RegisterForm from "@/app/(auth)/forms/register";
@@ -14,7 +15,7 @@ export default function RegisterPage() {
         <AuthenticationFrame
             imageSlide={loginImage}
             imagePosition={ImagePosition.Left}
-            imageAlt="Login background image"
+            imageAlt="register background image"
         >
             <RegisterForm/>
         </AuthenticationFrame>
