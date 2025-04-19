@@ -6,6 +6,8 @@ import TodoForm from "@/app/dashboard/todoForm";
 import TaskCounter from "@/app/dashboard/taskCount";
 import TaskItem from "@/app/dashboard/taskItems";
 import {useRouter} from 'next/navigation';
+import {logoutUser} from "@/app/redux/slices/authSlice";
+import toast from "react-hot-toast";
 
 const DashboardPage = () => {
     const dispatch = useAppDispatch();
@@ -31,10 +33,15 @@ const DashboardPage = () => {
         })
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        router.push("/login");
-    }
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutUser()).unwrap();
+            toast.success('Logged out successfully');
+            router.push('/login');
+        } catch (error: any) {
+            toast.error(error.message || 'Logout failed');
+        }
+    };
 
     return (
         <div className="container h-screen bg-[#262626] w-[100%]">
