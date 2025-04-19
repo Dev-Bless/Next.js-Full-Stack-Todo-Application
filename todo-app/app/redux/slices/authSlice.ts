@@ -40,6 +40,18 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const logoutUser = createAsyncThunk(
+    'auth/logout',
+    async (_, {rejectWithValue}) => {
+        try {
+            localStorage.removeItem('token');
+            return {success: true};
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Logout failed');
+        }
+    }
+);
+
 export const registerUser = createAsyncThunk(
     "auth/register",
     async (credentials: any, {rejectWithValue}) => {
@@ -56,10 +68,6 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        logout: (state) => {
-            state.user = null;
-            state.token = null;
-        },
         setRegisterForm: (state, action: PayloadAction<{ field: string; value: string }>) => {
             const {field, value} = action.payload;
             state.registerForm = {
@@ -95,7 +103,7 @@ const authSlice = createSlice({
             state.loginForm = initialState.loginForm;
             state.isFormValid = initialState.isFormValid;
             state.error = initialState.error;
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -115,6 +123,6 @@ const authSlice = createSlice({
     },
 });
 
-export const {logout, setRegisterForm, resetForm, setLoginForm, resetLoginForm} = authSlice.actions;
+export const {setRegisterForm, resetForm, setLoginForm, resetLoginForm} = authSlice.actions;
 export const selectAuth = (state: RootState<any, any, any>) => state.auth;
 export default authSlice.reducer;
