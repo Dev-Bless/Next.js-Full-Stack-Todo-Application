@@ -18,11 +18,20 @@ const LoginForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await dispatch(loginUser(loginForm));
-            toast.success("Login successful!");
-            router.push("/dashboard");
-        } catch (error: any) {
-            toast.error(error.message || "Login failed");
+            const result = await dispatch(loginUser(loginForm));
+
+            if (loginUser.fulfilled.match(result)) {
+                if (result.payload?.token) {
+                    toast.success("Login successful!");
+                    router.push("/dashboard");
+                } else {
+                    toast.error("Login failed: Invalid response format");
+                }
+            } else {
+                toast.error("Login failed");
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "An unexpected error occurred");
         }
     };
 
