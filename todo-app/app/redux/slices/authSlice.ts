@@ -27,15 +27,9 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async (credentials: { email: string; password: string; }, {rejectWithValue}) => {
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(credentials)
-            });
+            const {data} = await axios.post('/api/auth/login', credentials)
 
-            const data = await response.json();
-
-            if (!response.ok) throw new Error(data.message || 'Login failed');
+            if (!data) throw new Error(data.message() || 'Login failed');
 
             localStorage.setItem('token', data.token);
 
