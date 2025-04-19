@@ -15,11 +15,14 @@ export async function GET(request: NextRequest) {
         }
 
         const todoRepository = AppDataSource.getRepository(Todo);
-        const todos = await todoRepository.find()
+        const todos = await todoRepository.find({
+            where: {
+                user: {id: user.userId}
+            },
+        });
 
         return NextResponse.json(todos);
     } catch (error) {
-        console.error("Error fetching todos:", error);
         return NextResponse.json(
             {message: "Internal server error"},
             {status: 500}
