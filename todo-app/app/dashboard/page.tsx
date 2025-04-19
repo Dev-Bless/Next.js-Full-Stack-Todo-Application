@@ -1,13 +1,15 @@
 'use client'
 import {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "@/app/redux/hooks/hooks";
-import {deleteTodo, fetchTodos} from "@/app/redux/slices/todoSlice"; // Adjust import path as needed
+import {deleteTodo, fetchTodos} from "@/app/redux/slices/todoSlice";
 import TodoForm from "@/app/dashboard/todoForm";
 import TaskCounter from "@/app/dashboard/taskCount";
 import TaskItem from "@/app/dashboard/taskItems";
+import {useRouter} from 'next/navigation';
 
 const DashboardPage = () => {
     const dispatch = useAppDispatch();
+    const router = useRouter()
     const {todos, loading, error} = useAppSelector((state) => state.todos);
 
     useEffect(() => {
@@ -29,8 +31,16 @@ const DashboardPage = () => {
         })
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        router.push("/login");
+    }
+
     return (
         <div className="container h-screen bg-[#262626] w-[100%]">
+            <div className="bg-[#0D0D0D] flex justify-end p-5 ">
+                <a className="cursor-pointer hover:underline" onClick={handleLogout}>logout</a>
+            </div>
             <div className="header bg-[#0D0D0D] flex items-center justify-center w-full h-[24%]">
                 <img src="/logo.svg" alt="logo"/>
             </div>
