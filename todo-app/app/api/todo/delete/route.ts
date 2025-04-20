@@ -9,9 +9,9 @@ interface RouteParams {
     };
 }
 
-export async function DELETE(_: NextRequest, {params}: RouteParams) {
+export async function DELETE(request: NextRequest, {params}: RouteParams) {
     try {
-        const user = getAuthUser(_);
+        const user = getAuthUser(request);
         if (!user) {
             return NextResponse.json({message: "Unauthorized"}, {status: 401});
         }
@@ -20,7 +20,23 @@ export async function DELETE(_: NextRequest, {params}: RouteParams) {
             await AppDataSource.initialize();
         }
 
+
         const todoRepository = AppDataSource.getRepository(Todo);
+
+        const todo = await todoRepository.findOne({
+            where: {
+                id: params.id,
+                user: {id: user.userId}
+            }
+        });
+
+        if (!todo) {
+            return NextResponse.json(
+                {message: "Todo not found or you don't have permission to delete it"},
+                {status: 404}
+            );
+        }
+
         await todoRepository.delete(params.id);
 
         return new NextResponse(null, {status: 204});

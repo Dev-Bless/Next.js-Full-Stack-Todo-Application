@@ -21,6 +21,7 @@ const DashboardPage = () => {
 
     const deleteATodo = async (id: string) => {
         try {
+            console.log(id)
             await dispatch(deleteTodo(id));
         } catch (error: any) {
             console.error(error.message || "Deleting todo failed");
