@@ -1,6 +1,7 @@
 'use client'
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Todo} from "@/app/backend/entities/todo";
+import axios from "axios";
 
 interface todoState {
     todos: Todo[]
@@ -32,24 +33,19 @@ export const addTodo = createAsyncThunk(
 
             const todoData = {task};
 
-            const response = await fetch('/api/todo/add', {
-                method: 'POST',
+            const response = await axios.post('/api/todo/add', todoData, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(todoData)
+                }
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                return rejectWithValue(data.message || 'Failed to add todo');
-            }
-
-            return data;
+            return response.data;
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(
+                error.response?.data?.message ||
+                error.message ||
+                'Failed to add todo'
+            );
         }
     }
 );
@@ -64,22 +60,19 @@ export const fetchTodos = createAsyncThunk(
                 return rejectWithValue('No authentication token found');
             }
 
-            const response = await fetch('/api/todo/all', {
-                method: 'GET',
+            const response = await axios.get('/api/todo/all', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                return rejectWithValue(data.message || 'Failed to fetch todos');
-            }
-
-            return data;
+            return response.data;
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(
+                error.response?.data?.message ||
+                error.message ||
+                'Failed to fetch todos'
+            );
         }
     }
 );
@@ -94,25 +87,22 @@ export const deleteTodo = createAsyncThunk(
                 return rejectWithValue('No authentication token found');
             }
 
-            const response = await fetch(`/api/todo/delete/${id}`, {
-                method: 'DELETE',
+            const deletehere = await axios.delete(`/api/todo/delete/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) {
-                const data = await response.json();
-                return rejectWithValue(data.message || 'Failed to delete todo');
-            }
-
             return id;
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(
+                error.response?.data?.message ||
+                error.message ||
+                'Failed to delete todo'
+            );
         }
     }
 );
-
 
 const todoSlice = createSlice({
     name: 'todos',
